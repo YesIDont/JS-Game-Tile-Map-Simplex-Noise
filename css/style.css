@@ -1,0 +1,189 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+  box-shadow: none;
+}
+
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+  display: block;
+}
+
+div, p, button {
+  line-height: 1;
+  font-size: 13px;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+h1 {
+  font-size: 125%;
+}
+h2 {
+  color: #00c3ff;
+}
+
+body {  
+  background: #fff url('../img/bg-tiles.png') repeat;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+blockquote, q {
+  quotes: none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+  content: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+canvas {
+  display: block;
+  margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: transparent;
+  z-index: 1;
+}
+
+.UI {
+  bottom: 0;
+  height: 97%;
+  max-width: 97%;
+  position: fixed;
+  right: 0;
+  top: 0;
+  text-align: right;
+  transition: all 1s ease;
+  width: 350px;
+  z-index: 99999;
+  padding: 5px;
+}
+
+.UI-switch {
+  -webkit-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.3);
+  -moz-box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.3);
+  box-shadow: 0px 0px 15px 0px rgba(0,0,0,0.3);
+  background: #fff;
+  border: 1px solid #d1d1d1;
+  font-size: 13px;
+  height: 31px;
+  padding: 5px 10px;
+  text-align: center;
+  width: 150px;
+}
+
+.UI-tools {
+  background: #444;
+  color: #fff;
+  max-height: 90vw;
+  overflow-x: hidden;
+  overflow-y: auto;
+  text-align: left;
+  transition: all 0.5s ease;
+}
+.UI-tools > h1,
+.UI-tools > h2,
+.UI-tools > div {
+  display: block;
+  margin: 10px;
+}
+
+.UI-tools .option {
+  margin: 20px 10px 10px 10px;
+}
+
+.UI-tools .option .value {
+  color: #999;
+}
+
+.UI-tools .option .value span {
+  color: #00c3ff;
+}
+
+.UI-tools .option > h3 {
+  border-top: 1px solid #666;
+  margin-bottom: 10px;
+  padding-top: 10px;
+}
+
+.UI-tools .option > input {
+  width: 95%;
+}
+
+.fps {
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 10px;
+  background: #444;
+  color: #fff;
+}
+
+.rangeslider {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  height: 25px;
+  width: 100%;
+}
+.rangeslider__fill,
+.rangeslider__fill__bg {
+  display: block;
+  position: absolute;
+  top: 50%;
+  height: 2px;
+  z-index: 2;
+  background: #00c3ff;
+  border-radius: 10px;
+  will-change: width;
+}
+.rangeslider__handle {
+  will-change: width, height, top;
+  width: 13px;
+  height: 13px;
+  position: absolute;
+  top: 14px;
+  background: #00c3ff;
+  display: inline-block;
+  z-index: 3;
+  cursor: pointer;
+  border-radius: 50%;
+  -webkit-transition: width 0.1s ease-in-out, height 0.1s ease-in-out, top 0.1s ease-in-out;
+  transition: width 0.1s ease-in-out, height 0.1s ease-in-out, top 0.1s ease-in-out;
+}
+.rangeslider__handle:active {
+  background: #02c3ff;
+}
+.rangeslider__fill__bg {
+  background: #6f6f6f;
+  width: 100%;
+}
+.rangeslider--disabled {
+  opacity: 0.4;
+}

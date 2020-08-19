@@ -3,12 +3,41 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>repl.it</title>
-    <link href="style.css" rel="stylesheet" type="text/css" />
+    <title>Open Simplex Noise Simulation</title>
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
+    <div class="fps">FPS: <span>0</span></div>
+    <div class="UI">
+      <button class="UI-switch">Show / Hide Settings</button>
+      <div class="UI-tools" data-visible="true">
+        <h1>Open Simplex Noise Simulation</h1>
+        <h2>Tiles animated with Simplex Noise</h2>
+
+        <div class="option wave-speed">
+          <h3>Wave speed - noise offset per frame:</h3>
+          <div class="value">Value: <span>10</span></div>
+          <input type="range" min="0" max="200" value="10" step="0.1" />
+        </div>
+
+        <div class="option wave-height">
+          <h3>Wave height - noise sample multiplier:</h3>
+          <div class="value">Value: <span>60</span></div>
+          <input type="range" min="0" max="600" value="10" step="1" />
+        </div>
+
+        <div class="option wave-length">
+          <h3>Wave length - noise octaves:</h3>
+          <div class="value">Value: <span>10</span></div>
+          <input type="range" min="1" max="100" value="10" step="1" />
+        </div>
+      </div>
+    </div>
     <canvas id="canvas"></canvas>
-    <script src="simplexNoise.js"></script>
-    <script src="script.js"></script>
+    <script src="js/lib/pixi.js"></script>
+    <script src="js/lib/simplex_noise.js"></script>
+    <script src="js/lib/range_slider.js"></script>
+    <script src="js/lib/get_utils.js"></script>
+    <script src="js/index.js"></script>
   </body>
 </html>

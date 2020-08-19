@@ -10,13 +10,13 @@ function openSimplexNoise(clientSeed) {
 	const NORM_2D = 1.0 / 47.0;
 	const SQUISH_2D = (SQ3 - 1) / 2;
 	const STRETCH_2D = (1 / SQ3 - 1) / 2;
-	var base2D = toNums("110101000,110101211");
+	let base2D = toNums("110101000,110101211");
 	const gradients2D = decode(-5, 11, "a77a073aa3700330");
-	var lookupPairs2D = () => new Uint8Array([0,1, 1,0, 4,1, 17,0, 20,2, 21,2, 22,5, 23, 5,26, 4,39, 3,42, 4,43, 3]);
-	var p2D = decode(-1, 4, "112011021322233123132111");
+	let lookupPairs2D = () => new Uint8Array([0,1, 1,0, 4,1, 17,0, 20,2, 21,2, 22,5, 23, 5,26, 4,39, 3,42, 4,43, 3]);
+	let p2D = decode(-1, 4, "112011021322233123132111");
 
-	const setOf = (count, cb = (i)=>i) => { var a = [],i = 0; while (i < count) { a.push(cb(i ++)) } return a };
-	const doFor = (count, cb) => { var i = 0; while (i < count && cb(i++) !== true); };
+	const setOf = (count, cb = (i)=>i) => { let a = [],i = 0; while (i < count) { a.push(cb(i ++)) } return a };
+	const doFor = (count, cb) => { let i = 0; while (i < count && cb(i++) !== true); };
 
 	function shuffleSeed(seed,count = 1){
 		seed = seed * 1664525 + 1013904223 | 0;
@@ -32,7 +32,7 @@ function openSimplexNoise(clientSeed) {
 	};
 
 	function createContribution(type, baseSet, index) {
-		var i = 0;
+		let i = 0;
 		const multiplier = baseSet[index ++];
 		const c = { next : undefined };
 		while(i < type.dimensions){
@@ -44,7 +44,7 @@ function openSimplexNoise(clientSeed) {
 	}
 
 	function createLookupPairs(lookupArray, contributions){
-		var i;
+		let i;
 		const a = lookupArray();
 		const res = new Map();
 		for (i = 0; i < a.length; i += 2) { res.set(a[i], contributions[a[i + 1]]) }
@@ -55,7 +55,7 @@ function openSimplexNoise(clientSeed) {
 		const conts = [];
 		const d = type.dimensions;
 		const baseStep = d * d;
-		var k, i = 0;
+		let k, i = 0;
 		while (i < type.pD.length) {
 			const baseSet = type.base[type.pD[i]];
 			let previous, current;
@@ -82,39 +82,58 @@ function openSimplexNoise(clientSeed) {
 	const [contributions2D, lookup2D] = createContributionArray(types);
 	const perm = new Uint8Array(256);
 	const perm2D = new Uint8Array(256);
-	const perm3D = new Uint8Array(256);
-	const perm4D = new Uint8Array(256);
 	const source = new Uint8Array(setOf(256, i => i));
 
-	let seed = shuffleSeed(clientSeed, 3);
-
-  doFor(256, i => {
-    i = 255 - i;
-    seed = shuffleSeed(seed);
-    var r = (seed + 31) % (i + 1);
-    r += r < 0 ? i + 1 : 0;
-    perm[i] = source[r];
-    perm2D[i] = perm[i] & 0x0E;
-    perm3D[i] = (perm[i] % 24) * 3;
-    perm4D[i] = perm[i] & 0xFC;
-    source[r] = source[i];
-  });
+  let seed = 0;
+  
+  function shuffleSeed2() {
+    let seed = shuffleSeed(clientSeed, 3);
+  
+    doFor(256, i => {
+      i = 255 - i;
+      seed = shuffleSeed(seed);
+      let r = (seed + 31) % (i + 1);
+      r += r < 0 ? i + 1 : 0;
+      perm[i] = source[r];
+      perm2D[i] = perm[i] & 0x0E;
+      source[r] = source[i];
+    });
+	}
+	
+	shuffleSeed2();
 
 	base2D = undefined;
 	lookupPairs2D = undefined;
 	p2D = undefined;
 
 	const API = {
-		noise2D(x, y) {
-			const pD = perm2D;
-			const p = perm;
+		seed,
+		perm,
+		perm2D,
+		source,
+		updateSeed( newSeed ) {
+			this.seed = shuffleSeed( newSeed, 3 );
+		
+			doFor(256, i => {
+				i = 255 - i;
+				this.seed = shuffleSeed( this.seed );
+				let r = ( this.seed + 31 ) % ( i + 1 );
+				r += r < 0 ? i + 1 : 0;
+				this.perm[i] = this.source[r];
+				this.perm2D[i] = this.perm[i] & 0x0E;
+				this.source[r] = this.source[i];
+			});
+		},
+		sampleNoise2DAtCoord(x, y) {
+			const p = this.perm;
+			const pD = this.perm2D;
 			const g = gradients2D;
 			const stretchOffset = (x + y) * STRETCH_2D;
 			const xs = x + stretchOffset, ys = y + stretchOffset;
 			const xsb = Math.floor(xs), ysb = Math.floor(ys);
 			const squishOffset	= (xsb + ysb) * SQUISH_2D;
 			const dx0 = x - (xsb + squishOffset), dy0 = y - (ysb + squishOffset);
-			var c = (() => {
+			let c = (() => {
 				const xins = xs - xsb, yins = ys - ysb;
 				const inSum = xins + yins;
 				return lookup2D.get(
@@ -124,7 +143,7 @@ function openSimplexNoise(clientSeed) {
 					((inSum + xins) << 4)
 				);
 			})();
-			var i, value = 0;
+			let i, value = 0;
 			while (c !== undefined) {
 				const dx = dx0 + c.dx;
 				const dy = dy0 + c.dy;
