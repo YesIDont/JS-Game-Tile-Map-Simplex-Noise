@@ -195,7 +195,7 @@ window.addEventListener( 'load', function() {
           ) * height + map[c][r].yBuff;
         }
       };
-    };
+    };  
   
     Graphics.ticker.add( updateFrame ); 
     Graphics.start();

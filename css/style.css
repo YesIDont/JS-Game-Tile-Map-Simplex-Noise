@@ -87,7 +87,7 @@ input[type="checkbox"] {
   top: 0;
   text-align: right;
   transition: all 1s ease;
-  width: 350px;
+  width: 240px;
   z-index: 99999;
   padding: 5px;
 }
