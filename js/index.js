@@ -116,19 +116,11 @@ window.addEventListener( 'load', function() {
 
     uiRoundSamples.onchange = function( event ) {
       shouldRoundSamples = event.target.checked;
-    }
-  
-  
-    // init map elements
+    }; 
+
+    // Init map and fill it with Pixi.js sprites
     for( c = 0; c < nTilesInRow; c++ ) {
       map[ c ] = [];
-      for( r = 0; r < nTilesInColumn; r++ ) {
-        map[ c ][ r ] = undefined;
-      }
-    };    
-
-    // Fill map with sprites
-    for( c = 0; c < nTilesInRow; c++ ) {
       for( r = 0; r < nTilesInColumn; r++ ) {
         let w = tWidth * 0.5;
         let h = tHeight * 0.5;
@@ -152,11 +144,6 @@ window.addEventListener( 'load', function() {
         map[ c ][ r ] = tile;
       }
     };   
-  
-    document.addEventListener( 'keydown', function( event ) {
-      if( event.keyCode = 32 ) {
-      }
-    });
 
     function updateFrame( deltaSeconds ) {
       const now = Date.now();
