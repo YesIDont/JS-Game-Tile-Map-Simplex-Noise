@@ -71,6 +71,13 @@ canvas {
   z-index: 1;
 }
 
+input[type="checkbox"] {
+  width: 15px !important;
+  height: 15px;
+  position: relative;
+  top: 3px;
+}
+
 .UI {
   bottom: 0;
   height: 97%;
@@ -127,9 +134,7 @@ canvas {
 }
 
 .UI-tools .option > h3 {
-  border-top: 1px solid #666;
   margin-bottom: 10px;
-  padding-top: 10px;
 }
 
 .UI-tools .option > input {

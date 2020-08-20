@@ -41,12 +41,12 @@ window.addEventListener( 'load', function() {
   
   function AssetsPostLoadActions( loader, resources ) {
 
-    const nTilesInRow = 64;
+    const nTilesInRow = 128;
     const nTilesInColumn = nTilesInRow;
     // Check which canvas side is shorter and use it as square side
     const canvasShortSide = Math.min( Screen.width, Screen.height );
     const canvasLongSide = Math.max( Screen.width, Screen.height );  
-    const tWidth = Math.floor( canvasShortSide / nTilesInColumn );
+    const tWidth = Math.floor( canvasShortSide / nTilesInRow );
     const tHeight = tWidth * 0.5;  
     // Origin stores position of the first tile, that sits in the middle of y axis and middle of the x axis - half of the map width
     const xOrigin = ( Screen.width * 0.5 ) + ( tWidth * 0.5 );
@@ -55,7 +55,6 @@ window.addEventListener( 'load', function() {
     const baseText = grassTexture.baseTexture;
     // Calculate image height to match tile's width while keeping the ratio
     const tileHeightByRario = ( tWidth * baseText.height ) / baseText.width;
-    const noiseGenerator = openSimplexNoise( Date.now() );
     const uiFPSDisplay = get( '.fps span' );
     const UI = get( '.UI' );
     const uiTools = get( '.UI-tools' );
@@ -66,10 +65,10 @@ window.addEventListener( 'load', function() {
     const uiWaveHeightValue = get( '.wave-height span' );
     const uiWaveLengthSlider = get( '.wave-length input' );
     const uiWaveLengthValue = get( '.wave-length span' );
+    const uiRoundSamples = get( '.plateau-round' );
 
     // c = column, r = row
     let c, r;
-    let continuousGeneration = true;
     let deltaOffset = 10;length
     let height = 60;
     let lastTime = 0;
@@ -78,6 +77,9 @@ window.addEventListener( 'load', function() {
     let noiseZoom = tWidth / tHeight * noiseZoomMultiplier;
     let offsetCounter = 0;
     let sin = 0;
+    let shouldRoundSamples = false;
+
+    noise.seed(Date.now())
 
     rangesliderJs.create(get.all( 'input[type="range"]' ));
 
@@ -111,6 +113,10 @@ window.addEventListener( 'load', function() {
       noiseZoomMultiplier = value;
       noiseZoom = tWidth / tHeight * noiseZoomMultiplier;
     };
+
+    uiRoundSamples.onchange = function( event ) {
+      shouldRoundSamples = event.target.checked;
+    }
   
   
     // init map elements
@@ -136,11 +142,11 @@ window.addEventListener( 'load', function() {
         tile.height = tileHeightByRario;
 
         tile.y = (
-          noiseGenerator.sampleNoise2DAtCoord(
+          noise.simplex2(
             c / noiseZoom,
             r / noiseZoom
           )
-        ) * 32 + tile.yBuff;
+        ) * height + tile.yBuff;
 
         Simulation.addChild( tile );
         map[ c ][ r ] = tile;
@@ -149,35 +155,49 @@ window.addEventListener( 'load', function() {
   
     document.addEventListener( 'keydown', function( event ) {
       if( event.keyCode = 32 ) {
-        continuousGeneration = !continuousGeneration;
       }
     });
-    
+
     function updateFrame( deltaSeconds ) {
       const now = Date.now();
       uiFPSDisplay.innerHTML = Math.ceil( 1000 / (now - lastTime) );
       lastTime = Date.now();
+      offsetCounter += deltaSeconds ? deltaSeconds * deltaOffset / 1000 : ( deltaOffset / 1000 );
 
-      // if( continuousGeneration ) {
-        offsetCounter += deltaSeconds ? deltaSeconds * deltaOffset / 1000 : ( deltaOffset / 1000 );
+      if( shouldRoundSamples ) {
         // sin = Math.sin(now)
         // height = 32 + sin * 2;
         for( c = 0; c < nTilesInRow; c++ ) {
           for( r = 0; r < nTilesInColumn; r++ ) {
-            let newAltitude = noiseGenerator.sampleNoise2DAtCoord(
+            let noiseSample = noise.perlin2(
               c / noiseZoom + offsetCounter,
               r / noiseZoom + offsetCounter
             );
-            
-            newAltitude *= height;
-            newAltitude += map[c][r].yBuff;
-            map[c][r].y = newAltitude;
+
+            // scale sample from range -1 to 1 to 0 to 1
+            noiseSample = Math.ceil( noiseSample );
+
+            noiseSample *= height;
+            noiseSample += map[c][r].yBuff;
+            map[c][r].y = noiseSample;
           }
         };
-      // }
-    }
+        return;
+      };
+
+      // sin = Math.sin(now)
+      // height = 32 + sin * 2;
+      for( c = 0; c < nTilesInRow; c++ ) {
+        for( r = 0; r < nTilesInColumn; r++ ) {
+          map[c][r].y = noise.perlin2(
+            c / noiseZoom + offsetCounter,
+            r / noiseZoom + offsetCounter
+          ) * height + map[c][r].yBuff;
+        }
+      };
+    };
   
-    Graphics.ticker.add( updateFrame );
+    Graphics.ticker.add( updateFrame ); 
     Graphics.start();
   };
 
